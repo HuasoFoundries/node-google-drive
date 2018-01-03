@@ -1,0 +1,33 @@
+{
+  "name": "node-google-drive",
+  "version": "1.0.0",
+  "description": "Library to operate with Google Drive API v3 from Node.js, using system user tokens or personal keys",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HuasoFoundries/node-google-drive.git"
+  },
+  "keywords": [
+    "google",
+    "drive",
+    "google",
+    "drive"
+  ],
+  "author": "amenadiel@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HuasoFoundries/node-google-drive/issues"
+  },
+  "homepage": "https://github.com/HuasoFoundries/node-google-drive#readme",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "debug": "^3.1.0",
+    "google-auth-library": "^0.12.0",
+    "googleapis": "^23.0.0",
+    "lodash": "^4.17.4",
+    "readline": "^1.3.0"
+  }
+}

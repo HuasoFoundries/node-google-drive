@@ -1,0 +1,54 @@
+{
+
+    "html":
+    {
+        "allowed_file_extensions": ["htm", "html", "xhtml", "shtml", "xml", "svg", "hbs"],
+        "allowed_file_syntaxes": ["html", "xml"],
+        "brace_style": "collapse", // [collapse|expand|end-expand|none] Put braces on the same line as control statements (default), or put braces on own line (Allman / ANSI style), or just put end braces on own line, or attempt to keep them where they are
+        "end_with_newline": false, // End output with newline
+        "indent_char": " ", // Indentation character
+        "indent_handlebars": true, // e.g. {{#foo}}, {{/foo}}
+        "indent_inner_html": true, // Indent <head> and <body> sections
+        "indent_scripts": "keep", // [keep|separate|normal]
+        "indent_size": 2, // Indentation size
+        "max_preserve_newlines": 1, // Maximum number of line breaks to be preserved in one chunk (0 disables)
+        "preserve_newlines": true, // Whether existing line breaks before elements should be preserved (only works before elements, not inside tags or for text)
+        "unformatted": ["style", "h1", "h2", "h3", "h4", "h5", "h6"], // List of tags that should not be reformatted
+        "wrap_line_length": 0 // Lines should wrap at next opportunity after this number of characters (0 disables)
+    },
+    "css":
+    {
+        "allowed_file_extensions": ["css", "scss", "sass", "less"],
+        "end_with_newline": false, // End output with newline
+        "indent_char": " ", // Indentation character
+        "indent_size": 4, // Indentation size
+        "newline_between_rules": true, // Add a new line after every css rule
+        "selector_separator": " ",
+        "selector_separator_newline": true, // Separate selectors with newline or not (e.g. "a,\nbr" or "a, br"),
+        "indent_with_tabs": true
+    },
+    "js":
+    {
+        "allowed_file_extensions": ["js", "json", "jshintrc", "jsbeautifyrc"],
+        "brace_style": "collapse",
+        "break_chained_methods": false,
+        "eval_code": false,
+        "end_with_newline": false, // End output with newline
+        "indent_char": " ",
+        "indent_level": 0,
+        "indent_size": 4,
+        "indent_with_tabs": true,
+        "jslint_happy": true,
+        "keep_array_indentation": false,
+        "keep_function_indentation": false,
+        "max_preserve_newlines": 3,
+        "preserve_newlines": true,
+        "space_after_anon_function": true,
+        "space_before_conditional": true,
+        "space_in_empty_paren": false, // Add padding spaces within empty paren, "f()" vs "f( )"
+        "space_in_paren": false, // Add padding spaces within paren, ie. f( a, b )
+        "unescape_strings": false,
+        "wrap_line_length": 180
+    }
+
+}
