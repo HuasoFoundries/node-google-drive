@@ -311,13 +311,13 @@ NodeGoogleDrive.prototype.listFolders = function (parentFolder, pageToken, recur
                 let folders = _.filter(response.files, function (file) {
                     return file.mimeType === 'application/vnd.google-apps.folder';
                 });
-                response.files = folders;
+                response.folders = folders;
             } else {
-                response.files = [];
+                response.folders = [];
             }
-            debug('Found %s folders on parent folder %s', response.files.length, folderId);
+            debug('Found %s folders on parent folder %s', response.folders.length, folderId);
             response.parentFolder = folderId;
-            return response;
+            return _.omit(response, ['files']);
 
         }).catch(function (err) {
             debug('Error listing files ', err.message);

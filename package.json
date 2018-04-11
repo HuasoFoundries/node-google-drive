@@ -1,6 +1,6 @@
 {
   "name": "node-google-drive",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Library to operate with Google Drive API v3 from Node.js, using system user tokens or personal keys",
   "main": "index.js",
   "scripts": {
