@@ -2,11 +2,13 @@ const Promise = require('bluebird'),
     _ = require('lodash'),
     path = require('path'),
     fs = Promise.promisifyAll(require('fs')),
-    this_script = path.basename(__filename, path.extname(__filename)),
-    debug = require('debug')(`${this_script}`),
+    debug = require('debug')(`node-google-drive:index`),
     readline = require('readline'),
     google = require('googleapis'),
+    readChunk = require('read-chunk'),
+    fileType = require('file-type'),
     GoogleAuth = require('google-auth-library');
+
 
 /**
  * A module that allows the user to interact with google drive's API
@@ -177,7 +179,7 @@ var NodeGoogleDrive = function (options) {
 
     // Use a service account
     _this.useServiceAccountAuth = function (creds) {
-
+        debug('trying to use service account');
         return Promise.try(function () {
 
             let credsObj;
@@ -213,21 +215,29 @@ var NodeGoogleDrive = function (options) {
 
 /**
  * List files (optionally, start from the specified folder, if set)
- * @see  https://developers.google.com/drive/v3/reference/files/list
- * @see  https://developers.google.com/drive/v3/reference/files#resource
- * @param {string} [parentFolder] - id of the folder from which to search. Defaults to the ROOT_FOLDER passed in the options
- * @param {string} [pageToken]    - the page token of a previous request, when the prior result is paginated
- * @param {string} [recursive]    - wether to list also files in subfolders of the requested parentFolder. defaults to true.
- * If false, omits the files under subfolders. Works only when parentFolder is explicitly set
+ * @see https://developers.google.com/drive/v3/reference/files/list
+ * @see https://developers.google.com/drive/v3/reference/files#resource
  *
- * @return {Array}  array of file resources results
+ * @param  {string}  parentFolder    - id of the folder from which to search.
+ *                                   Defaults to the ROOT_FOLDER passed in the
+ *                                   options
+ * @param  {string}  pageToken       - the page token of a previous request,
+ *                                   when the prior result is paginated
+ * @param  {string}  recursive       - wether to list also files in subfolders
+ *                                   of the requested parentFolder. defaults to
+ *                                   true. If false, omits the files under
+ *                                   subfolders. Works only when parentFolder is
+ *                                   explicitly set
+ * @param  {boolean}  includeRemoved  Either to include removed files in the
+ *                                   listing. Defaults to false
+ * @return {Array}   array of file resources results
  */
-NodeGoogleDrive.prototype.listFiles = function (parentFolder, pageToken, recursive) {
+NodeGoogleDrive.prototype.listFiles = function (parentFolder, pageToken, recursive, includeRemoved) {
     var _this = this;
     var folderId = parentFolder || _this.options.ROOT_FOLDER;
 
     var request = {
-        includeRemoved: false,
+        includeRemoved: !!includeRemoved,
         spaces: 'drive',
         pageSize: 100,
         fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)'
@@ -249,9 +259,8 @@ NodeGoogleDrive.prototype.listFiles = function (parentFolder, pageToken, recursi
         }
 
     }
-    var listAsync = Promise.promisify(_this.service.files.list);
 
-    return listAsync(request)
+    return _this.service.files.listAsync(request)
         .then(function (response) {
 
             debug('Found %s files on folder %s', response.files.length, folderId);
@@ -266,21 +275,28 @@ NodeGoogleDrive.prototype.listFiles = function (parentFolder, pageToken, recursi
 
 /**
  * List folders (optionally, start from the specified folder, if set)
- * @see  https://developers.google.com/drive/v3/reference/files/list
- * @see  https://developers.google.com/drive/v3/reference/files#resource
- * @param {string} [parentFolder] - id of the folder from which to search. Defaults to the ROOT_FOLDER passed in the options
- * @param {string} [pageToken]    - the page token of a previous request, when the prior result is paginated
- * @param {string} [recursive]    - wether to list also files in subfolders of the requested parentFolder. defaults to true.
- * If false, omits the files under subfolders. Works only when parentFolder is explicitly set
+ * @see https://developers.google.com/drive/v3/reference/files/list
+ * @see https://developers.google.com/drive/v3/reference/files#resource
  *
- * @return {Array}  array of folder resources results
+ * @param  {string}  parentFolder    - id of the folder from which to search.
+ *                                   Defaults to the ROOT_FOLDER passed in the
+ *                                   options
+ * @param  {string}  pageToken       - the page token of a previous request,
+ *                                   when the prior result is paginated
+ * @param  {string}  recursive       - wether to list also files in subfolders
+ *                                   of the requested parentFolder. defaults to
+ *                                   true. If false, omits the files under
+ *                                   subfolders. Works only when parentFolder is
+ *                                   explicitly set
+ * @param {boolean} includeRemoved - either to list removed folders or not
+ * @return {Array}   array of folder resources results
  */
-NodeGoogleDrive.prototype.listFolders = function (parentFolder, pageToken, recursive) {
+NodeGoogleDrive.prototype.listFolders = function (parentFolder, pageToken, recursive, includeRemoved) {
     var _this = this;
     var folderId = parentFolder || _this.options.ROOT_FOLDER;
 
     var request = {
-        includeRemoved: false,
+        includeRemoved: !!includeRemoved,
         spaces: 'drive',
         pageSize: 100,
         fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)'
@@ -302,9 +318,8 @@ NodeGoogleDrive.prototype.listFolders = function (parentFolder, pageToken, recur
         }
 
     }
-    var listAsync = Promise.promisify(_this.service.files.list);
 
-    return listAsync(request)
+    return _this.service.files.listAsync(request)
         .then(function (response) {
 
             if (response.files.length) {
@@ -326,7 +341,7 @@ NodeGoogleDrive.prototype.listFolders = function (parentFolder, pageToken, recur
 };
 
 /**
- * Writes a text file.
+ * Writes a text file from an input string.
  *
  * @param {string} content               - The content of the text file
  * @param {string} [parentFolder]        - The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
@@ -385,12 +400,12 @@ NodeGoogleDrive.prototype.removeFile = function (fileId) {
  */
 NodeGoogleDrive.prototype.writePDFFile = function (sourcefile, parentFolder, destinationFilename) {
     var _this = this;
-    var defaultsource = path.resolve(__dirname + '/../rep_CB/municipales_2017-07-10/reporte_municipalidad_de_huechuraba_2017-07-10_week.pdf');
+    var defaultsource = path.resolve(__dirname + '/data/sample.pdf');
     var mimeType = 'application/pdf';
     var folderId = parentFolder || _this.options.ROOT_FOLDER;
 
     var fileMetadata = {
-        name: destinationFilename || 'Test2.pdf',
+        name: destinationFilename || 'sample.pdf',
         mimeType: mimeType
     };
     if (folderId !== null) {
@@ -398,6 +413,7 @@ NodeGoogleDrive.prototype.writePDFFile = function (sourcefile, parentFolder, des
     }
 
     var pdf_path = sourcefile || defaultsource;
+
     return _this.service.files.createAsync({
         resource: fileMetadata,
         media: {
@@ -411,6 +427,57 @@ NodeGoogleDrive.prototype.writePDFFile = function (sourcefile, parentFolder, des
 
     }).catch(function (err) {
         //debug('The API returned an error: ', err);
+        throw err;
+    });
+};
+
+
+/**
+ * Writes a File given its path. It infers the mime type using {@link https://github.com/sindresorhus/file-type}
+ *
+ * @param {string} sourcefile            - The source file from which to read the contents of the file to upload
+ * @param {string} [parentFolder]        - The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
+ * @param {string} [destinationFilename] - The destination filename, defaults to the basename of the uploaded file
+ *
+ * @returns {Promise<Object>} the response from google drive
+ */
+NodeGoogleDrive.prototype.writeFile = function (sourcefile, parentFolder, destinationFilename) {
+    var _this = this;
+    var defaultsource = path.resolve(__dirname + '/data/sample.pdf');
+
+
+    var mimeType = 'application/pdf';
+    var folderId = parentFolder || _this.options.ROOT_FOLDER;
+
+
+    var file_path = sourcefile || defaultsource;
+
+    return readChunk(file_path, 0, 4100).then((buffer) => {
+
+
+        var fileMetadata = {
+            name: destinationFilename || path.basename(file_path),
+            mimeType: fileType(buffer).mime
+        };
+        if (folderId !== null) {
+            fileMetadata.parents = [folderId];
+        }
+
+
+        return _this.service.files.createAsync({
+            resource: fileMetadata,
+            media: {
+                mimeType: mimeType,
+                body: fs.createReadStream(file_path)
+            }
+        });
+    }).then(function (response) {
+
+        debug('Wrote file to Google Drive', response);
+        return response;
+
+    }).catch(function (err) {
+        debug('The API returned an error: ', err);
         throw err;
     });
 };

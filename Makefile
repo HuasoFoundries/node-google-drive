@@ -21,12 +21,14 @@ update_eslint:
 
 default: install
 .PHONY: default install run fix-permissions  tag version
-.PHONY: build
+.PHONY: build test
 
 
 install:
 	npm  install
 
+test:
+	@DEBUG=node-google-drive:* node test/test.js
 
 fix-permissions:
 	chown  ubuntu:ubuntu . -R
