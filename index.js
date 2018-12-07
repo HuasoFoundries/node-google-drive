@@ -9,6 +9,32 @@ const Promise = require('bluebird'),
   fileType = require('file-type'),
   GoogleAuth = require('google-auth-library');
 
+let defaultExportFormats = {
+  'application/vnd.google-apps.site': {
+    extension: 'zip',
+    mimeType: 'application/zip'
+  },
+  'application/vnd.google-apps.document': {
+    extension: 'docx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  },
+  'application/vnd.google-apps.spreadsheet': {
+    extension: 'xlsx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  },
+  'application/vnd.google-apps.presentation': {
+    extension: 'pptx',
+    mimeType:
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+  },
+  'application/vnd.google-apps.drawing': {
+    extension: 'png',
+    mimeType: 'image/png'
+  }
+};
+
 /**
  * A module that allows the user to interact with google drive's API
  *
@@ -270,6 +296,96 @@ NodeGoogleDrive.prototype.listFiles = function(
       debug('Error listing files ', err.message);
       throw err;
     });
+};
+
+/**
+ * Exports a google apps file and pipe its body to the desired destination
+ * @https://developers.google.com/drive/api/v3/reference/files/export
+ *
+ * @param  {google.drive.files#resource}  file               A file resource
+ *                                                           with id, name and
+ *                                                           type
+ * @param  {string}                       destinationFolder  The destination
+ *                                                           folder to download
+ *                                                           to (use absolute
+ *                                                           paths to avoid
+ *                                                           surprises)
+ * @param  {Object}                       mimeOptions        An object
+ *                                                           containing the
+ *                                                           extension and
+ *                                                           mimetype of the
+ *                                                           desired export
+ *                                                           format. If not set,
+ *                                                           it will take the
+ *                                                           default according
+ *                                                           to the file
+ *                                                           mimeType
+ * @return {Promise}                      A promise that resolves when the file
+ *                                        is downloaded
+ */
+NodeGoogleDrive.prototype.exportFile = function(
+  file,
+  destinationFolder,
+  mimeOptions
+) {
+  let _this = this;
+
+  let { extension, mimeType } = mimeOptions ||
+      defaultExportFormats[file.mimeType] || {
+        extension: 'pdf',
+        mimeType: 'application/pdf'
+      },
+    request = {
+      fileId: file.id,
+      mimeType: mimeType
+    },
+    destination = `${destinationFolder || '/tmp'}/${file.name}.${extension}`,
+    dest = fs.createWriteStream(destination);
+
+  return new Promise((resolve, reject) => {
+    _this.service.files
+      .export(request)
+      .on('end', function() {
+        resolve(destination);
+      })
+      .on('error', function(err) {
+        reject(err);
+      })
+      .pipe(dest);
+  });
+};
+
+/**
+ * Gets a file and pipe its body to the desired destination
+ * (it only works for non google-docs types)
+ *
+ * @param  {google.drive.files#resource}  file A file resource with id, name and type
+ * @param  {string}   destinationFolder  The destination folder to download to (use absolute paths to avoid surprises)
+ * @return {Promise}  A promise that resolves when the file is downloaded
+ */
+NodeGoogleDrive.prototype.getFile = function(file, destinationFolder) {
+  if (file.mimeType.indexOf('vnd.google-apps') !== -1) {
+    return this.exportFile(file, destinationFolder);
+  }
+  let _this = this,
+    request = {
+      fileId: file.id,
+      alt: 'media'
+    },
+    destination = `${destinationFolder || '/tmp'}/${file.name}`,
+    dest = fs.createWriteStream(destination);
+
+  return new Promise((resolve, reject) => {
+    _this.service.files
+      .get(request)
+      .on('end', function() {
+        resolve(destination);
+      })
+      .on('error', function(err) {
+        reject(err);
+      })
+      .pipe(dest);
+  });
 };
 
 /**

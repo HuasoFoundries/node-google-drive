@@ -34,6 +34,46 @@ ___
 
 Returns **[Array][6]&lt;[google.drive.files#resource][7]>** array of file resources results
 ___
+### exportFile
+
+Exports a google apps file and pipe its body to the desired destination
+___
+#### Parameters
+
+-   `file` **[google.drive.files#resource][7]** A file resource
+                                                              with id, name and
+                                                              type
+-   `destinationFolder` **[string][4]** The destination
+                                                              folder to download
+                                                              to (use absolute
+                                                              paths to avoid
+                                                              surprises)
+-   `mimeOptions` **[Object][1]** An object
+                                                              containing the
+                                                              extension and
+                                                              mimetype of the
+                                                              desired export
+                                                              format. If not set,
+                                                              it will take the
+                                                              default according
+                                                              to the file
+                                                              mimeType
+
+Returns **[Promise][8]** A promise that resolves when the file
+                                       is downloaded
+___
+### getFile
+
+Gets a file and pipe its body to the desired destination
+(it only works for non google-docs types)
+___
+#### Parameters
+
+-   `file` **[google.drive.files#resource][7]** A file resource with id, name and type
+-   `destinationFolder` **[string][4]** The destination folder to download to (use absolute paths to avoid surprises)
+
+Returns **[Promise][8]** A promise that resolves when the file is downloaded
+___
 ### listFolders
 
 -   **See: [https://developers.google.com/drive/v3/reference/files/list][2]**
