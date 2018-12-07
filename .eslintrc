@@ -239,7 +239,7 @@
 
 
         "space-before-blocks": [1, "always"], // require or disallow space before blocks (off by default)
-        "space-before-function-paren": [1,
+        "space-before-function-paren": [0,
         {
             "anonymous": "always",
             "named": "never"

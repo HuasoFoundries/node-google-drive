@@ -27,6 +27,9 @@ default: install
 install:
 	npm  install
 
+docs:
+	@node generate_docs.js
+
 test:
 	@DEBUG=node-google-drive:* node test/test.js
 
@@ -45,6 +48,7 @@ tag_and_push:
 		git tag v$(v)
 		git push
 		git push --tags
+		npm publish
 
 
-tag: update_version build  tag_and_push
+tag: update_version docs test tag_and_push

@@ -1,10 +1,10 @@
 {
   "name": "node-google-drive",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Library to operate with Google Drive API v3 from Node.js, using system user tokens or personal keys",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,9 @@
   },
   "devDependencies": {
     "babel-eslint": "^8.1.2",
+    "documentation": "^8.1.2",
     "dotenv": "^5.0.1",
-    "eslint": "^4.19.1"
+    "eslint": "^4.19.1",
+    "param-links": "^1.0.2"
   }
 }
