@@ -1,4 +1,4 @@
 *
 !.gitignore
-!.config.js
+!config.js
 !keyfile_example.json
