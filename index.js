@@ -251,22 +251,31 @@ var NodeGoogleDrive = function(options) {
  *                                   explicitly set
  * @param  {boolean}  includeRemoved  Either to include removed files in the
  *                                   listing. Defaults to false
+ * @param {Array<string>} fields - array of  properties to request from each file
+ *                                   defaults to [id, name, parents, mimeType, modifiedTime]
+ *
  * @return {Array<google.drive.files#resource>}   array of file resources results
  */
 NodeGoogleDrive.prototype.listFiles = function(
   parentFolder,
   pageToken,
   recursive,
-  includeRemoved
+  includeRemoved,
+  fields
 ) {
   var _this = this;
   var folderId = parentFolder || _this.options.ROOT_FOLDER;
+
+  fields =
+    fields instanceof Array && fields.length
+      ? fields
+      : ['id', 'name', 'parents', 'mimeType', 'modifiedTime'];
 
   var request = {
     includeRemoved: !!includeRemoved,
     spaces: 'drive',
     pageSize: 100,
-    fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)'
+    fields: `nextPageToken, files(${fields.join(',')})`
   };
 
   // If pageToken is set, then request the next page of file list
@@ -404,22 +413,29 @@ NodeGoogleDrive.prototype.getFile = function(file, destinationFolder) {
  *                                   subfolders. Works only when parentFolder is
  *                                   explicitly set
  * @param {boolean} includeRemoved - either to list removed folders or not
+ * @param {Array<string>} fields - array of  properties to request from each file
+ *                                   defaults to [id, name, parents, mimeType, modifiedTime]
+ *
  * @return {Array<google.drive.files#resource>}   array of folder resources results
  */
 NodeGoogleDrive.prototype.listFolders = function(
   parentFolder,
   pageToken,
   recursive,
-  includeRemoved
+  includeRemoved,
+  fields
 ) {
   var _this = this;
   var folderId = parentFolder || _this.options.ROOT_FOLDER;
-
+  fields =
+    fields instanceof Array && fields.length
+      ? fields
+      : ['id', 'name', 'parents', 'mimeType', 'modifiedTime'];
   var request = {
     includeRemoved: !!includeRemoved,
     spaces: 'drive',
     pageSize: 100,
-    fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)'
+    fields: `nextPageToken, files(${fields.join(',')})`
   };
 
   // If pageToken is set, then request the next page of file list

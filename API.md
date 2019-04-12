@@ -31,6 +31,8 @@ ___
                                       explicitly set
 -   `includeRemoved` **[boolean][5]** Either to include removed files in the
                                       listing. Defaults to false
+-   `fields` **[Array][6]&lt;[string][4]>** array of  properties to request from each file
+                                      defaults to [id, name, parents, mimeType, modifiedTime]
 
 Returns **[Array][6]&lt;[google.drive.files#resource][7]>** array of file resources results
 ___
@@ -94,6 +96,8 @@ ___
                                       subfolders. Works only when parentFolder is
                                       explicitly set
 -   `includeRemoved` **[boolean][5]** either to list removed folders or not
+-   `fields` **[Array][6]&lt;[string][4]>** array of  properties to request from each file
+                                      defaults to [id, name, parents, mimeType, modifiedTime]
 
 Returns **[Array][6]&lt;[google.drive.files#resource][7]>** array of folder resources results
 ___
