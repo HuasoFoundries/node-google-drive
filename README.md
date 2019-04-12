@@ -1,5 +1,6 @@
 # node-google-drive
 
+[![Travis CI](https://travis-ci.org/HuasoFoundries/node-google-drive.svg?branch=master)](https://travis-ci.org/HuasoFoundries/node-google-drive)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FHuasoFoundries%2Fnode-google-drive.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FHuasoFoundries%2Fnode-google-drive?ref=badge_shield)
 
 Library to operate with Google Drive API v3 from Node.js, using system user tokens or personal keys
@@ -16,21 +17,21 @@ So, basically, you can operate in two ways. You either use Google Oauth and manu
 2. Select your project or create a new one (and then select it)
 3. Enable the Drive API for your project
 
--   In the sidebar on the left, expand **APIs & auth** > **APIs**
--   Search for "drive"
--   Click on "Drive API"
--   click the blue "Enable API" button
+- In the sidebar on the left, expand **APIs & auth** > **APIs**
+- Search for "drive"
+- Click on "Drive API"
+- click the blue "Enable API" button
 
 4. Create a service account for your project
 
--   In the sidebar on the left, expand **APIs & auth** > **Credentials**
--   Click blue "Add credentials" button
--   Select the "Service account" option
--   Select "Furnish a new private key" checkbox
--   Select the "JSON" key type option
--   Click blue "Create" button
--   your JSON key file is generated and downloaded to your machine (**it is the only copy!**)
--   note your service account's email address (also available in the JSON key file)
+- In the sidebar on the left, expand **APIs & auth** > **Credentials**
+- Click blue "Add credentials" button
+- Select the "Service account" option
+- Select "Furnish a new private key" checkbox
+- Select the "JSON" key type option
+- Click blue "Create" button
+- your JSON key file is generated and downloaded to your machine (**it is the only copy!**)
+- note your service account's email address (also available in the JSON key file)
 
 5. Share the doc (or docs) with your service account using the email noted above
 
