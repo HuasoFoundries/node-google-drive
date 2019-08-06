@@ -584,7 +584,7 @@ NodeGoogleDrive.prototype.writeFile = function(
   parentFolder,
   destinationFilename,
   mimeType,
-  destinationMimeType,
+  opts = {},
 ) {
   var _this = this;
   var defaultsource = path.resolve(__dirname + '/data/sample.pdf');
@@ -592,7 +592,8 @@ NodeGoogleDrive.prototype.writeFile = function(
   var folderId = parentFolder || _this.options.ROOT_FOLDER;
 
   var file_path = sourcefile || defaultsource;
-  var destinationType = destinationMimeType || mimeType;
+  var destinationType = opts.destinationMimeType || mimeType;
+  var fields = opts.fields || 'id, name, parents, mimeType, modifiedTime';
 
   return readChunk(file_path, 0, 4100)
     .then(buffer => {
@@ -609,7 +610,8 @@ NodeGoogleDrive.prototype.writeFile = function(
         media: {
           mimeType: mimeType,
           body: fs.createReadStream(file_path)
-        }
+        },
+        fields: fields,
       });
     })
     .then(function(response) {
