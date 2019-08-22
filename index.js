@@ -71,7 +71,7 @@ var NodeGoogleDrive = function(options) {
    * @param      {Object}  google_auth  - google auth type instance. Either Oauth2 or JWT
    * @return     {Object}  service property of this instance, with promisified methods for the files namespace
    */
-  var setSetvice = function(google_auth) {
+  var setService = function(google_auth) {
     return Promise.try(function() {
       let service = google.drive({
         version: 'v3',
@@ -103,7 +103,7 @@ var NodeGoogleDrive = function(options) {
         .then(function(new_token) {
           google_auth.credentials = new_token;
           debug('new token expiry date', new_token.expiry_date);
-          return setSetvice(google_auth);
+          return setService(google_auth);
         });
     });
   };
@@ -135,7 +135,7 @@ var NodeGoogleDrive = function(options) {
             return storeOauthToken(new_token, token_path);
           })
           .then(function() {
-            return setSetvice(google_auth);
+            return setService(google_auth);
           });
       });
     });
@@ -180,7 +180,7 @@ var NodeGoogleDrive = function(options) {
         if (err) {
           reject(err);
         }
-        resolve(setSetvice(google_auth));
+        resolve(setService(google_auth));
       });
     });
   };
