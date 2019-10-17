@@ -133,6 +133,7 @@ ___
 -   `parentFolder` **[string][4]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
 -   `destinationFilename` **[string][4]?** The destination filename, defaults to the basename of the uploaded file
 -   `mimeType` **[string][4]?** The file's mime type. If not provided, we will try to detect it, which won't work for non binary types
+-   `destinationMimeType` **[string][4]?** The file's destination mime type. This will help in conversion for files that can be processed by google drive. **Eg.** "application/vnd.google-apps.spreadsheet" for "text/csv" mimetype to convert into google sheet
 
 Returns **[Promise][8]&lt;[Object][1]>** the response from google drive
 ___
