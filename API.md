@@ -10,30 +10,74 @@ ___
 
 Returns **[Object][1]** the instance of this class with its options and constants set
 ___
+### list
+
+List files or folders according to passes options object
+___
+#### Parameters
+
+-   `arg1` **[files/list#request][2]** An options object (optional, default `{}`)
+    -   `arg1.fileId` **([string][3] | null)** The parent folder identifier,defaults
+                                                                                       to ROOT_FOLDER (optional, default `ROOT_FOLDER`)
+    -   `arg1.pageToken` **([string][3] | null)** The page token when pagination is due (optional, default `null`)
+    -   `arg1.recursive` **[boolean][4]** If false, search only direct children
+                                                                                       of passed parent folder (optional, default `false`)
+    -   `arg1.includeRemoved` **[boolean][4]** include removed files (optional, default `false`)
+    -   `arg1.fields` **[string][3]** fields to include in
+                                                                                       the request The fields (optional, default `'nextPageToken,files(id,  name, parents, mimeType,
+                                                                                       modifiedTime)'`)
+    -   `arg1.q` **[files/list#search-parameters][5]** query string to filter results. (optional, default `'()'`)
+    -   `arg1.orderBy` **[string][3]** Optinally sort results by a given field (optional, default `null`)
+    -   `arg1.spaces` **[string][3]** The spaces (drive, photos, appData) (optional, default `'drive'`)
+    -   `arg1.pageSize` **[number][6]** The page size (max 1000) (optional, default `100`)
+    -   `arg1.supportsTeamDrives` **[boolean][4]** Wether it supports team drives (optional, default `false`)
+    -   `arg1.teamDriveId` **[string][3]** The team drive identifier (optional, default `''`)
+
+Returns **[Promise][7]&lt;[files/list#response][8]>** List of files and or folders resulting from the request
+___
 ### listFiles
 
--   **See: [https://developers.google.com/drive/v3/reference/files/list][2]**
--   **See: [https://developers.google.com/drive/v3/reference/files#resource][3]**
+-   **See: [https://developers.google.com/drive/v3/reference/files/list][9]**
+-   **See: [https://developers.google.com/drive/v3/reference/files#resource][10]**
+-   **See: [https://developers.google.com/drive/api/v3/search-files#file_fields][11]**
 
 List files (optionally, start from the specified folder, if set)
 ___
 #### Parameters
 
--   `parentFolder` **[string][4]** id of the folder from which to search.
-                                      Defaults to the ROOT_FOLDER passed in the
-                                      options
--   `pageToken` **[string][4]** the page token of a previous request,
-                                      when the prior result is paginated
--   `recursive` **[string][4]** wether to list also files in subfolders
-                                      of the requested parentFolder. defaults to
-                                      true. If false, omits the files under
-                                      subfolders. Works only when parentFolder is
-                                      explicitly set
--   `includeRemoved` **[boolean][5]** Either to include removed files in the
-                                      listing. Defaults to false
--   `fields` **[string][4]** the partial fields that should be selected
+-   `parentFolder` **[string][3]** id of the folder from which to search. Defaults to
+                                                                  the ROOT_FOLDER passed in the options
+-   `pageToken` **[string][3]** the page token of a previous request, when the prior
+                                                                  result is paginated
+-   `recursive` **[string][3]** wether to list also files in subfolders of the
+                                                                  requested parentFolder. defaults to true. If false,
+                                                                  omits the files under subfolders. Works only when
+                                                                  parentFolder is explicitly set
+-   `includeRemoved` **[boolean][4]** Either to include removed files in the listing.
+                                                                  Defaults to false
+-   `fields` **[string][3]** the partial fields that should be selected
 
-Returns **[Array][6]&lt;[google.drive.files#resource][7]>** array of file resources results
+Returns **[Array][12]&lt;[google.drive.files#resource][13]>** array of file resources results
+___
+### listFolders
+
+-   **See: [https://developers.google.com/drive/v3/reference/files/list][9]**
+-   **See: [https://developers.google.com/drive/v3/reference/files#resource][10]**
+
+List folders (optionally, start from the specified folder, if set)
+___
+#### Parameters
+
+-   `parentFolder` **[string][3]** id of the folder from which to search. Defaults to the ROOT_FOLDER passed in the
+                                       options
+-   `pageToken` **[string][3]** the page token of a previous request, when the prior result is paginated
+-   `recursive` **[string][3]** wether to list also files in subfolders of the requested parentFolder. defaults
+                                       to true. If false, omits the files under subfolders. Works only when parentFolder
+                                       is explicitly set
+-   `includeRemoved` **[boolean][4]** either to list removed folders or not
+-   `fields` **[string][3]** the partial fields that should be selected
+
+Returns **[Array][12]&lt;[google.drive.files#resource][13]>** array of folder resources results
 ___
 ### exportFile
 
@@ -41,100 +85,103 @@ Exports a google apps file and pipe its body to the desired destination
 ___
 #### Parameters
 
--   `file` **[google.drive.files#resource][7]** A file resource
-                                                              with id, name and
-                                                              type
--   `destinationFolder` **[string][4]** The destination
-                                                              folder to download
-                                                              to (use absolute
-                                                              paths to avoid
-                                                              surprises)
--   `mimeOptions` **[Object][1]** An object
-                                                              containing the
-                                                              extension and
-                                                              mimetype of the
-                                                              desired export
-                                                              format. If not set,
-                                                              it will take the
-                                                              default according
-                                                              to the file
-                                                              mimeType
+-   `file` **[google.drive.files#resource][13]** A file resource with id, name and type
+-   `destinationFolder` **[string][3]** The destination folder to download to (use absolute paths
+                                                              to avoid surprises)
+-   `mimeOptions` **[Object][1]** An object containing the extension and mimetype of the
+                                                              desired export format. If not set, it will take the default
+                                                              according to the file mimeType
+-   `fileName` **[String][3]** The file name **without extension** (the extension must be
+                                                              passed in the mimeOptions argument) Defaults to the file
+                                                              resource's name
 
-Returns **[Promise][8]** A promise that resolves when the file
-                                       is downloaded
+Returns **[Promise][7]** A promise that resolves when the file is downloaded
 ___
 ### getFile
 
-Gets a file and pipe its body to the desired destination
-(it only works for non google-docs types)
+Gets a file and pipe its body to the desired destination (it only works for non google-docs types)
 ___
 #### Parameters
 
--   `file` **[google.drive.files#resource][7]** A file resource with id, name and type
--   `destinationFolder` **[string][4]** The destination folder to download to (use absolute paths to avoid surprises)
+-   `file` **[google.drive.files#resource][13]** A file resource with id, name and type
+-   `destinationFolder` **[string][3]** The destination folder to download to (use absolute paths
+                                                              to avoid surprises)
+-   `fileName` **[string][3]** (optional) The file name. Defaults to the file resource's name
 
-Returns **[Promise][8]** A promise that resolves when the file is downloaded
-___
-### listFolders
-
--   **See: [https://developers.google.com/drive/v3/reference/files/list][2]**
--   **See: [https://developers.google.com/drive/v3/reference/files#resource][3]**
-
-List folders (optionally, start from the specified folder, if set)
-___
-#### Parameters
-
--   `parentFolder` **[string][4]** id of the folder from which to search.
-                                      Defaults to the ROOT_FOLDER passed in the
-                                      options
--   `pageToken` **[string][4]** the page token of a previous request,
-                                      when the prior result is paginated
--   `recursive` **[string][4]** wether to list also files in subfolders
-                                      of the requested parentFolder. defaults to
-                                      true. If false, omits the files under
-                                      subfolders. Works only when parentFolder is
-                                      explicitly set
--   `includeRemoved` **[boolean][5]** either to list removed folders or not
--   `fields` **[string][4]** the partial fields that should be selected
-
-Returns **[Array][6]&lt;[google.drive.files#resource][7]>** array of folder resources results
-___
-### writeTextFile
-
-Writes a text file from an input string.
-___
-#### Parameters
-
--   `content` **[string][4]** The content of the text file
--   `parentFolder` **[string][4]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
--   `destinationFilename` **[string][4]?** The destination filename
-
-Returns **[Promise][8]&lt;[Object][1]>** the response from google drive
+Returns **[Promise][7]** A promise that resolves when the file is downloaded
 ___
 ### writePDFFile
 
-Writes a PDF File
+Writes a PDF File POC to use `create` method
 ___
 #### Parameters
 
--   `sourcefile` **[string][4]** The source file from which to read the content of the PDF File to upload
--   `parentFolder` **[string][4]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
--   `destinationFilename` **[string][4]?** The destination filename
+-   `sourcefile` **[string][3]** The source file from which to read the content of the PDF File to
+                                                      upload
+-   `parentFolder` **[string][3]?** The parent folder on which to write. Defaults to the ROOT_FOLDER
+                                                      passed in the constructor options
+-   `destinationFilename` **[string][3]?** The destination filename
 
-Returns **[Promise][8]&lt;[Object][1]>** the response from google drive
+Returns **[Promise][7]&lt;[Object][1]>** the response from google drive
+___
+### create
+___
+#### Parameters
+
+-   `$0` **[Object][1]** 
+    -   `$0.source`   (optional, default `'some file'`)
+    -   `$0.parentFolder`   (optional, default `ROOT_FOLDER`)
+    -   `$0.name`   (optional, default `null`)
+    -   `$0.mimeType`   (optional, default `null`)
+-   `source` **[string][3]** The source file from which to read the contents of the file to
+                                                      upload
+-   `parentFolder` **[string][3]?** The parent folder on which to write. Defaults to the ROOT_FOLDER
+                                                      passed in the constructor options
+-   `destinationFilename` **[string][3]?** The destination filename, defaults to the basename of the
+                                                      uploaded file
+-   `mimeType` **[string][3]?** The file's mime type. If not provided, Google Drive will guess it
+
+Returns **[Promise][7]&lt;[Object][1]>** the response from google drive
+
+**Meta**
+
+-   **deprecated**: . Use NodeGoogleDrive.prototype.create instead
+
 ___
 ### writeFile
-
-Writes a File given its path. It can infer the mime type using [https://github.com/sindresorhus/file-type][9]
 ___
 #### Parameters
 
--   `sourcefile` **[string][4]** The source file from which to read the contents of the file to upload
--   `parentFolder` **[string][4]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
--   `destinationFilename` **[string][4]?** The destination filename, defaults to the basename of the uploaded file
--   `mimeType` **[string][4]?** The file's mime type. If not provided, we will try to detect it, which won't work for non binary types
+-   `source` **[string][3]** The source file from which to read the contents of the file to
+                                                      upload
+-   `parentFolder` **[string][3]?** The parent folder on which to write. Defaults to the ROOT_FOLDER
+                                                      passed in the constructor options
+-   `destinationFilename` **[string][3]?** The destination filename, defaults to the basename of the
+                                                      uploaded file
+-   `mimeType` **[string][3]?** The file's mime type. If not provided, Google Drive will guess it
 
-Returns **[Promise][8]&lt;[Object][1]>** the response from google drive
+Returns **[Promise][7]&lt;[Object][1]>** the response from google drive
+
+**Meta**
+
+-   **deprecated**: . Use NodeGoogleDrive.prototype.create instead
+
+___
+### writeTextFile
+___
+#### Parameters
+
+-   `content` **[string][3]** The content of the text file
+-   `parentFolder` **[string][3]?** The parent folder on which to write. Defaults to the ROOT_FOLDER
+                                                      passed in the constructor options
+-   `destinationFilename` **[string][3]?** The destination filename
+
+Returns **[Promise][7]&lt;[Object][1]>** the response from google drive
+
+**Meta**
+
+-   **deprecated**: . Use NodeGoogleDrive.prototype.create instead
+
 ___
 ### createFolder
 
@@ -142,10 +189,11 @@ Creates a folder in Google Drive
 ___
 #### Parameters
 
--   `parentFolder` **[string][4]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed in the constructor options
--   `folderName` **[string][4]?** The name of the folder that will be created
+-   `parentFolder` **[string][3]?** The parent folder on which to write. Defaults to the ROOT_FOLDER passed
+                                               in the constructor options
+-   `folderName` **[string][3]?** The name of the folder that will be created
 
-Returns **[Promise][8]&lt;[Object][1]>** the response from google drive
+Returns **[Promise][7]&lt;[Object][1]>** the response from google drive
 ___
 ## setSetvice
 
@@ -165,9 +213,9 @@ ___
 ### Parameters
 
 -   `google_auth` **google.auth.OAuth2** The OAuth2 client to get token for
--   `token_path` **[string][4]** The token path
+-   `token_path` **[string][3]** The token path
 
-Returns **[Promise][8]&lt;[Object][1]>** The service property of this instance
+Returns **[Promise][7]&lt;[Object][1]>** The service property of this instance
 ___
 ## authorizeClientSecret
 
@@ -177,24 +225,32 @@ ___
 ### Parameters
 
 -   `credentials` **[Object][1]** The authorization client credentials.
--   `token_path` **[string][4]** the path to store the client token
+-   `token_path` **[string][3]** the path to store the client token
 
-Returns **[Promise][8]** a promise that unfolds to a new auth token
+Returns **[Promise][7]** a promise that unfolds to a new auth token
 
 [1]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[2]: https://developers.google.com/drive/v3/reference/files/list
+[2]: https://developers.google.com/drive/api/v3/reference/files/list#request
 
-[3]: https://developers.google.com/drive/v3/reference/files#resource
+[3]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[4]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[4]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[5]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[5]: https://developers.google.com/drive/api/v3/search-parameters
 
-[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[6]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[7]: https://developers.google.com/drive/v3/reference/files#resource
+[7]: http://bluebirdjs.com/docs/api-reference.html
 
-[8]: http://bluebirdjs.com/docs/api-reference.html
+[8]: https://developers.google.com/drive/api/v3/reference/files/list#response
 
-[9]: https://github.com/sindresorhus/file-type
+[9]: https://developers.google.com/drive/v3/reference/files/list
+
+[10]: https://developers.google.com/drive/v3/reference/files#resource
+
+[11]: https://developers.google.com/drive/api/v3/search-files#file_fields
+
+[12]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+
+[13]: https://developers.google.com/drive/v3/reference/files#resource

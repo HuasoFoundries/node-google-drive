@@ -66,12 +66,12 @@ var NodeGoogleDrive = function(options) {
   };
 
   /**
-   * Sets the setvice.
-   *
+   * Sets the authentication service.
+   * @private
    * @param      {Object}  google_auth  - google auth type instance. Either Oauth2 or JWT
    * @return     {Object}  service property of this instance, with promisified methods for the files namespace
    */
-  var setSetvice = function(google_auth) {
+  var setService = function(google_auth) {
     return Promise.try(function() {
       let service = google.drive({
         version: 'v3',
@@ -103,18 +103,19 @@ var NodeGoogleDrive = function(options) {
         .then(function(new_token) {
           google_auth.credentials = new_token;
           debug('new token expiry date', new_token.expiry_date);
-          return setSetvice(google_auth);
+          return setService(google_auth);
         });
     });
   };
 
   /**
-   * Get and store new token after prompting for user authorization, and then
-   * execute the given callback with the authorized OAuth2 client.
+   * Get and store new token after prompting for user authorization, and then execute the given callback with the
+   * authorized OAuth2 client.
+   * @private
    *
-   * @param      {google.auth.OAuth2}  google_auth  The OAuth2 client to get token for
-   * @param      {string}              token_path   The token path
-   * @return     {Promise<Object>}     The service property of this instance
+   * @param  {google.auth.OAuth2}  google_auth  The OAuth2 client to get token for
+   * @param  {string}              token_path   The token path
+   * @return {Promise<Object>}     The service property of this instance
    */
   var getNewOauthToken = function(google_auth, token_path) {
     return Promise.try(function() {
@@ -135,20 +136,19 @@ var NodeGoogleDrive = function(options) {
             return storeOauthToken(new_token, token_path);
           })
           .then(function() {
-            return setSetvice(google_auth);
+            return setService(google_auth);
           });
       });
     });
   };
 
   /**
-   * Create an OAuth2 client with the given credentials, and then execute the
-   * given callback function.
+   * Create an OAuth2 client with the given credentials, and then execute the given callback function.
+   * @private
    *
-   * @param {Object} credentials The authorization client credentials.
-   * @param {string} token_path the path to store the client token
-   *
-   * @return {Promise} a promise that unfolds to a new auth token
+   * @param  {Object}   credentials  The authorization client credentials.
+   * @param  {string}   token_path   the path to store the client token
+   * @return {Promise}  a promise that unfolds to a new auth token
    */
   var authorizeClientSecret = function(credentials, token_path) {
     var clientSecret = credentials.installed.client_secret;
@@ -180,7 +180,7 @@ var NodeGoogleDrive = function(options) {
         if (err) {
           reject(err);
         }
-        resolve(setSetvice(google_auth));
+        resolve(setService(google_auth));
       });
     });
   };
@@ -237,22 +237,23 @@ var NodeGoogleDrive = function(options) {
 /**
  * List files or folders according to passes options object
  *
- * @param  {files/list#request}            [arg1={}]                              An options object
- * @param  {string|null}                   [arg1.fileId=ROOT_FOLDER]              The parent folder identifier,defaults
+ *
+ * @param  {files/list#request}            [options={}]                              An options object
+ * @param  {string|null}                   [options.fileId=ROOT_FOLDER]              The parent folder identifier,defaults
  *                                                                                to ROOT_FOLDER
- * @param  {string|null}                   [arg1.pageToken=null]                  The page token when pagination is due
- * @param  {boolean}                       [arg1.recursive=false]                 If false, search only direct children
+ * @param  {string|null}                   [options.pageToken=null]                  The page token when pagination is due
+ * @param  {boolean}                       [options.recursive=false]                 If false, search only direct children
  *                                                                                of passed parent folder
- * @param  {boolean}                       [arg1.includeRemoved=false]            include removed files
- * @param  {string}                        [arg1.fields='nextPageToken,files(id,  name, parents, mimeType,
+ * @param  {boolean}                       [options.includeRemoved=false]            include removed files
+ * @param  {string}                        [options.fields='nextPageToken,files(id,  name, parents, mimeType,
  *                                                                                modifiedTime)'] fields to include in
  *                                                                                the request The fields
- * @param  {files/list#search-parameters}  [arg1.q='()']                          query string to filter results.
- * @param  {string}                        [arg1.orderBy=null]                    Optinally sort results by a given field
- * @param  {string}                        [arg1.spaces='drive']                  The spaces (drive, photos, appData)
- * @param  {number}                        [arg1.pageSize=100]                    The page size (max 1000)
- * @param  {boolean}                       [arg1.supportsTeamDrives=false]        Wether it supports team drives
- * @param  {string}                        [arg1.teamDriveId='']                  The team drive identifier
+ * @param  {files/list#search-parameters}  [options.q='()']                          query string to filter results.
+ * @param  {string}                        [options.orderBy=null]                    Optinally sort results by a given field
+ * @param  {string}                        [options.spaces='drive']                  The spaces (drive, photos, appData)
+ * @param  {number}                        [options.pageSize=100]                    The page size (max 1000)
+ * @param  {boolean}                       [options.supportsTeamDrives=false]        Wether it supports team drives
+ * @param  {string}                        [options.teamDriveId='']                  The team drive identifier
  *
  * @return {Promise<files/list#response>}  List of files and or folders resulting from the request
  */
