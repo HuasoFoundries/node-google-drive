@@ -107,8 +107,13 @@ var NodeGoogleDrive = function(options) {
         });
     });
   };
+  /**
+   * Authorizing the client
+   * @namespace authorization
+   **/
 
   /**
+   * @memberof authorization
    * Get and store new token after prompting for user authorization, and then execute the given callback with the
    * authorized OAuth2 client.
    * @private
@@ -143,6 +148,7 @@ var NodeGoogleDrive = function(options) {
   };
 
   /**
+   * @memberof authorization
    * Create an OAuth2 client with the given credentials, and then execute the given callback function.
    * @private
    *
@@ -233,8 +239,13 @@ var NodeGoogleDrive = function(options) {
 
   return _this;
 };
+/**
+ * Listing files and folders
+ * @namespace listFilesAndFolders
+ **/
 
 /**
+ * @memberof listFilesAndFolders
  * List files or folders according to passes options object
  *
  *
@@ -299,6 +310,7 @@ NodeGoogleDrive.prototype.list = async function({
     });
 };
 /**
+ * @memberof listFilesAndFolders
  * List files (optionally, start from the specified folder, if set)
  * @see https://developers.google.com/drive/v3/reference/files/list
  * @see https://developers.google.com/drive/v3/reference/files#resource
@@ -336,6 +348,7 @@ NodeGoogleDrive.prototype.listFiles = async function(
 };
 
 /**
+ * @memberof listFilesAndFolders
  * List folders (optionally, start from the specified folder, if set)
  * @see https://developers.google.com/drive/v3/reference/files/list
  * @see https://developers.google.com/drive/v3/reference/files#resource
@@ -370,19 +383,25 @@ NodeGoogleDrive.prototype.listFolders = async function(
 };
 
 /**
+ * Downloading or exporting files
+ * @namespace downloadOrExportFiles
+ **/
+
+/**
+ * @memberof downloadOrExportFiles
  * Exports a google apps file and pipe its body to the desired destination
  * @https://developers.google.com/drive/api/v3/reference/files/export
  *
  * @param  {google.drive.files#resource}  file               A file resource with id, name and type
- * @param  {string}                       destinationFolder  The destination folder to download to (use absolute paths
+ * @param  {string}   destinationFolder  The destination folder to download to (use absolute paths
  *                                                           to avoid surprises)
- * @param  {Object}                       mimeOptions        An object containing the extension and mimetype of the
+ * @param  {Object}   mimeOptions        An object containing the extension and mimetype of the
  *                                                           desired export format. If not set, it will take the default
  *                                                           according to the file mimeType
- * @param  {String}                       fileName           The file name **without extension** (the extension must be
+ * @param  {String}  fileName           The file name **without extension** (the extension must be
  *                                                           passed in the mimeOptions argument) Defaults to the file
  *                                                           resource's name
- * @return {Promise}                      A promise that resolves when the file is downloaded
+ * @return {Promise}  A promise that resolves when the file is downloaded
  */
 NodeGoogleDrive.prototype.exportFile = function(
   file,
@@ -418,6 +437,8 @@ NodeGoogleDrive.prototype.exportFile = function(
 };
 
 /**
+ * @memberof downloadOrExportFiles
+ *
  * Gets a file and pipe its body to the desired destination (it only works for non google-docs types)
  *
  * @param  {google.drive.files#resource}  file               A file resource with id, name and type
@@ -459,8 +480,20 @@ NodeGoogleDrive.prototype.getFile = function(
       .pipe(dest);
   });
 };
+/**
+ * Create, update or delete files and folders
+ * @namespace createOrDelete
+ */
 
-NodeGoogleDrive.prototype.removeFile = function(fileId) {
+/**
+ * @memberof   createOrDelete
+ *
+ * Removes a file by ID
+ *
+ * @param  {string}           fileId  The file identifier
+ * @return {Promise<Object>}  retult of the deletion attempt
+ */
+NodeGoogleDrive.prototype.removeFile = async function(fileId) {
   return this.service.files.deleteAsync({
     fileId: fileId,
     resource: {
@@ -470,36 +503,36 @@ NodeGoogleDrive.prototype.removeFile = function(fileId) {
 };
 
 /**
- * Creates a file or folder on Google Drive either by uploading a local file or
- * directly sending text/binary contents. This method replaces the old ones
- * that used positional arguments (they are still here for retro compatibility)
+ * @memberof   createOrDelete
+ *
+ * Creates a file or folder on Google Drive either by uploading a local file or directly sending text/binary contents.
+ * This method replaces the old ones that used positional arguments (they are still here for retro compatibility)
  *
  *
- * @example Create a text file sending the contents as a string
+ * @example
  *
- * ```js
- *  let uploadResponse = await gdriveInstance.writeFile(
+ *
+ *  //  Create a text file sending the contents as a string
+ *  let uploadResponse = await gdriveInstance.create({
  *    source: 'THIS WILL BE THE CONTENT OF MY FILE',
  *    parentFolder: 'ASDFGHZXCCVVFVEVEW',
  *    name: 'hello_world.txt'
  *    mimeType: 'text/plain'
  *  });
  *
- * ```
- * @example create a Google Spreadsheet from a local CSV File
+ * @example
  *
- * ```js
+ *  //create a Google Spreadsheet from a local CSV File
  *  let transformResponse = await gdriveInstance.create({
  *    source:'./data/XCODE_mini.csv',
  *    name: 'XCODE Spreadsheet',
  *    parentFolder: 'ASDFGHZXCCVVFVEVEW',
  *    mimeType: 'application/vnd.google-apps.spreadsheet'
  *  });
- * ```
  *
- * @example Stream a PDF document to Google Drive
+ * @example
  *
- * ```js
+ *  // Stream a PDF document to Google Drive
  *  let uploadResponse = await gdriveInstance.create({
  *    source:fs.createReadStream('./data/sample.pdf'),
  *    name: 'MyDocument.pdf',
@@ -507,26 +540,25 @@ NodeGoogleDrive.prototype.removeFile = function(fileId) {
  *    mimeType: 'application/pdf'
  *  });
  *
- * ```
+ * @example
  *
- * @example Create a subfolder
- * ```js
+ *  // Create a subfolder
+ *
  *  let folderCreation = await gdriveInstance.create({
  *    parentFolder: null, // <--- this will create the subfolder below the root folder
  *    name: 'Generic Folder',
  *    mimeType: 'application/vnd.google-apps.folder'
- * });
- * ```
+ *  });
  *
- * @param  {string}  source         - The path to a local file, a {@ReadStream} or content (plain or binary)
- *                                    to upload
- * @param  {string}  [parentFolder] - The parent folder on which to write. Defaults to the ROOT_FOLDER
- *                                                   passed in the constructor options
- * @param  {string}  [name]         - The destination filename, defaults to the basename of the
- *                                                  uploaded file
- * @param  {string}  [mimeType]     - The file's mime type. If not provided, Google Drive will guess it
- * @param  {string}  [fields]       - Preserved for retrocompatibility, has no effect
- *
+ * @param  {Object}           arg1                 The argument 1
+ * @param  {string}           arg1.source          - The path to a local file, a {@ReadStream} or content (plain or
+ *                                                 binary) to upload
+ * @param  {string}           [arg1.parentFolder]  - The parent folder on which to write. Defaults to the ROOT_FOLDER
+ *                                                 passed in the constructor options
+ * @param  {string}           [arg1.name]          - The destination filename, defaults to the basename of the uploaded
+ *                                                 file
+ * @param  {string}           [arg1.mimeType]      - The file's mime type. If not provided, Google Drive will guess it
+ * @param  {string}           [arg1.fields]        - Preserved for retrocompatibility, has no effect
  * @return {Promise<Object>}  the response from google drive
  */
 NodeGoogleDrive.prototype.create = async function({
@@ -568,16 +600,18 @@ NodeGoogleDrive.prototype.create = async function({
 };
 
 /**
+ * @memberof createOrDelete
+ *
  * Creates a folder in Google Drive
  * Shorthand method to create a folder. Uses [create](#create) internally
  *
  * @example
- * ```js
+ *
  *  let uploadResponse = await this.create({
  *    parentFolder:'ASDFGZXVVBBabzbdoiirrib',
  *    name: 'new_subfolder'
  *  });
- * ```
+ *
  * @param  {string}           [parentFolder]  - The parent folder on which to write. Defaults to the ROOT_FOLDER passed
  *                                            in the constructor options
  * @param  {string}           [folderName]    - The name of the folder that will be created
@@ -592,17 +626,21 @@ NodeGoogleDrive.prototype.createFolder = function(parentFolder, folderName) {
 };
 
 /**
+ * Deprecated methods
  * @namespace Deprecated
- * @memberof Deprecated.methods
+ */
+
+/**
+ * @memberof Deprecated
  * @deprecated: use [create](#create) instead
  * Writes a file to Google Drive. Delegates on method [create](#create).
  *
  * If `mimeType` or `opts.destinationMimeType` aren't set, Google will detect the file type
  * if possible. Set this explicitly to convert common files to native google docs/sheets/slides, etc
  *
- * @example create a Google Spreadsheet from a local CSV File
+ * @example
  *
- * ```js
+ *  // create a Google Spreadsheet from a local CSV File
  *  let transformResponse = await gdriveInstance.writeFile(
  *    './data/XCODE_mini.csv',
  *    null,
@@ -612,7 +650,6 @@ NodeGoogleDrive.prototype.createFolder = function(parentFolder, folderName) {
  *      destinationMimeType: 'application/vnd.google-apps.spreadsheet' <--- convert to this format
  *    }
  *  );
- * ```
  *
  *
  * @param  {string}   source          - The source file from which to read the contents of the file to upload
@@ -648,20 +685,17 @@ NodeGoogleDrive.prototype.writeFile = function(
 };
 
 /**
- * @namespace Deprecated
- * @memberof Deprecated.methods
+ * @memberof Deprecated
  * @deprecated: use [create](#create) instead
  * Shorthand method to create a text file. Kept for retrocompatibility
  *
  * @example
- * ```js
  *  let uploadResponse = await gdriveInstance.writeTextFile(
  *    'THIS WILL BE THE CONTENT OF MY FILE',
  *    'ASDFGHZXCCVVFVEVEW',
  *    'hello_world.txt'
- *  });
+ *  );
  *
- * ```
  *
  * @param  {string}           content                - The content of the text file
  * @param  {string}           [parentFolder]         - The parent folder on which to write. Defaults to the ROOT_FOLDER
@@ -683,8 +717,7 @@ NodeGoogleDrive.prototype.writeTextFile = function(
 };
 
 /**
- * @namespace Deprecated
- * @memberof Deprecated.methods
+ * @memberof Deprecated
  * @deprecated: use [create](#create) instead
  * Just an example method to show how to upload a PDF
  * (You should be using `create` directly, instead)

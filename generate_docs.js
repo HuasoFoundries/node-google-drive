@@ -37,7 +37,7 @@ documentation
     shallow: true,
     hljs: {
       highlightAuto: true,
-      languages: ['js', 'json', 'sql', 'sh', 'bash']
+      languages: ['js', 'json']
     }
   })
   .then(res => {
@@ -45,7 +45,7 @@ documentation
       paths,
       hljs: {
         highlightAuto: true,
-        languages: ['js', 'json', 'sql', 'sh', 'bash']
+        languages: ['js', 'json']
       }
     });
   })
