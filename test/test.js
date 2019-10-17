@@ -13,7 +13,7 @@ const ROOT_FOLDER = Config.GOOGLE_DRIVE_ROOT_FOLDER,
     GOOGLE_AUTH_SCOPE: GOOGLE_AUTH_SCOPE
   }),
   service_account_path = path.resolve(
-    `${__dirname}/../config/${Config.GOOGLE_DRIVE_KEY_FILE}`
+    `${__dirname}/./config/${Config.GOOGLE_DRIVE_KEY_FILE}`
   ),
   creds_service_user = Config.GOOGLE_CREDENTIALS
     ? JSON.parse(Config.GOOGLE_CREDENTIALS)

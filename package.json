@@ -4,7 +4,9 @@
   "description": "Library to operate with Google Drive API v3 from Node.js, using system user tokens or personal keys",
   "main": "index.js",
   "scripts": {
-    "test": "make test"
+    "test": "DEBUG=node-google-drive:* ava test/*.test.js --tap | tap-diff",
+    "test:verbose": "DEBUG=node-google-drive:* ava test/*.test.js --serial --verbose",
+    "test:serial": "DEBUG=node-google-drive:* ava test/*.test.js --serial --tap | tap-diff"
   },
   "repository": {
     "type": "git",
@@ -33,10 +35,12 @@
     "readline": "^1.3.0"
   },
   "devDependencies": {
+    "ava": "^2.4.0",
     "babel-eslint": "^8.1.2",
     "documentation": "^9.3.1",
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
-    "param-links": "^1.0.2"
+    "param-links": "^1.0.2",
+    "tap-diff": "^0.1.1"
   }
 }

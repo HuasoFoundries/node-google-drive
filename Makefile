@@ -25,7 +25,7 @@ default: install
 
 
 install:
-	npm  install
+	npm  installa
 
 docs:
 	@node generate_docs.js

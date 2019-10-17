@@ -720,7 +720,6 @@ NodeGoogleDrive.prototype.writeTextFile = function(
  * @memberof Deprecated
  * @deprecated: use [create](#create) instead
  * Just an example method to show how to upload a PDF
- * (You should be using `create` directly, instead)
  *
  * @param  {string}           sourcefile             - The source file from which to read the content of the PDF File to
  *                                                   upload
