@@ -5,7 +5,7 @@ const Promise = require('bluebird'),
   debug = require('debug')(`node-google-drive:index`),
   readline = require('readline'),
   google = require('googleapis'),
-  GoogleAuth = require('google-auth-library');
+  { GoogleAuth } = require('google-auth-library');
 
 let defaultExportFormats = {
   'application/vnd.google-apps.site': {
@@ -58,6 +58,7 @@ var NodeGoogleDrive = function(options) {
   ];
 
   var auth_client = new GoogleAuth();
+  console.log({ auth_client });
   var oauth2Client;
   // var jwt_client;
 
@@ -154,6 +155,7 @@ var NodeGoogleDrive = function(options) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
+    debug({ auth_client });
     var google_auth = new auth_client.OAuth2(
       clientId,
       clientSecret,

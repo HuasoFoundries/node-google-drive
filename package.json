@@ -26,7 +26,7 @@
     "bluebird": "^3.5.1",
     "debug": "^3.1.0",
     "file-type": "^7.6.0",
-    "google-auth-library": "^0.12.0",
+    "google-auth-library": "^5.5.0",
     "googleapis": "^23.0.0",
     "lodash": "^4.17.11",
     "read-chunk": "^2.1.0",
@@ -38,5 +38,9 @@
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
     "param-links": "^1.0.2"
+  },
+  "engines": {
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
   }
 }
