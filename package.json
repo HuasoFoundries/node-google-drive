@@ -26,7 +26,7 @@
   "homepage": "https://github.com/HuasoFoundries/node-google-drive#readme",
   "dependencies": {
     "bluebird": "^3.5.1",
-    "debug": "^3.1.0",
+    "debug": "^4.2.0",
     "file-type": "^7.6.0",
     "google-auth-library": "^0.12.0",
     "googleapis": "^23.0.0",
