@@ -37,7 +37,7 @@
   "devDependencies": {
     "ava": "^2.4.0",
     "babel-eslint": "^8.1.2",
-    "documentation": "^9.3.1",
+    "documentation": "^13.2.4",
     "dotenv": "^5.0.1",
     "eslint": "^4.19.1",
     "param-links": "^1.0.2",
