@@ -131,7 +131,7 @@ var NodeGoogleDrive = function(options) {
       console.log('Authorize this app by visiting this url: ', authUrl);
       var rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: console.log
       });
       rl.question('Enter the code from that page here: ', function(code) {
         rl.close();
@@ -436,6 +436,31 @@ NodeGoogleDrive.prototype.exportFile = function(
   });
 };
 
+NodeGoogleDrive.prototype.exportFileStream = function(
+  fileId,
+  fileName
+) {
+  let _this = this;
+
+    const request = {
+      fileId,
+      alt: 'media',
+    },
+    destination = `./tmp/${fileName}.pdf`,
+    dest = fs.createWriteStream(destination);
+  return new Promise(async (resolve, reject) => {
+    await _this.service.files
+      .get(request, {responseType: "stream"})
+      .on('end', function (e) {
+        resolve(destination);
+      })
+      .on('error', function (err) {
+        console.log("ERROR")
+        reject(err);
+      }).pipe(dest);
+  });
+};
+
 /**
  * @memberof downloadOrExportFiles
  *
@@ -480,6 +505,7 @@ NodeGoogleDrive.prototype.getFile = function(
       .pipe(dest);
   });
 };
+
 /**
  * Create, update or delete files and folders
  * @namespace createOrDelete
